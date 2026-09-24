@@ -1,3 +1,4 @@
+using System.Numerics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Bill.Tests
@@ -16,7 +17,7 @@ namespace Bill.Tests
             Bill bill = new Bill ();
 
             //act
-            decimal actualResult = bill.calculateTip(billTotal,tm);
+            decimal actualResult = Bill.calculateTip(billTotal,tm);
             //assert
             Assert.AreEqual(expectedTip,actualResult);
         }
@@ -49,6 +50,34 @@ namespace Bill.Tests
             decimal actualResult = Bill.calculateTip(billTotal, tm, fixedValue);
 
             Assert.AreEqual(expectedValue, actualResult);
+        }
+
+        [TestMethod]
+        public void ComputeTip_NegativeSubtotal_ThrowsException()
+        {
+            decimal billTotal = -300.00m;
+            TipMode tm = TipMode.none;
+            decimal tipInput = 0m;
+
+            Bill bill = new Bill();
+
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(
+            () => Bill.calculateTip(billTotal, tm, tipInput));
+
+        }
+
+        [TestMethod]
+        public void ComputeTip_NegativeFixedTip_ThrowsException()
+        {
+            decimal billTotal = 100.00m;
+            TipMode tm = TipMode.fixed_tip;
+            decimal tipInput = -15.00m;
+
+            Bill bill = new Bill();
+
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => Bill.calculateTip(billTotal, tm, tipInput));
+
+
         }
     }
   
