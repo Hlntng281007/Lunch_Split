@@ -6,9 +6,8 @@ namespace AttendeeTests
  public class AttendeeTests
     {
         [TestMethod]
-        public void
         {
-
+            
         }
     }
 
