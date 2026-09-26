@@ -1,10 +1,10 @@
 using System.Numerics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Bill.Tests
+namespace Splitter
 {
     [TestClass]
-    public class BillTests
+    public class SplitterTest
     {
         [TestMethod]
         public void ComputeTip_NoTipMode_ReturnsZero()
@@ -14,7 +14,7 @@ namespace Bill.Tests
             TipMode tm = TipMode.none;
             decimal expectedTip = 0.0m;
 
-            Bill bill = new Bill ();
+            Splitter bll = new Bill ();
 
             //act
             decimal actualResult = Bill.calculateTip(billTotal,tm);
