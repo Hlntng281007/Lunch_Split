@@ -45,7 +45,7 @@ public class BillValidatorTests
         {
             new ("Alex", Weight: 1, Included: true)
         };
-        BillValidator validator = new BillValidator;
+        BillValidator validator = new BillValidator();
 
         ValidationResult result = validator.Validate(bill, attendees);
 
@@ -56,7 +56,7 @@ public class BillValidatorTests
     {
         Bill bill = new Bill (Subtotal: 10.00m, Tax: 0m, TipMode.none, tipInput: 0m);
         List<Attendee> attendees = new List<Attendee> ();
-        BillValidator validator = new BillValidator;
+        BillValidator validator = new BillValidator();
 
         ValidationResult result = validator.Validate(bill,attendees);
     }
