@@ -3,7 +3,7 @@ using Lunch_Split.Model;
 using Lunch_Split.Engine;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Splitter
+namespace SplitterTest
 {
     [TestClass]
     public class SplitterTest
