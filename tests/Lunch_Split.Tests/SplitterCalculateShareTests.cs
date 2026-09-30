@@ -72,7 +72,7 @@ public class SplitterCalculateSharesTests
         {
             new Attendee("Alex", Weight: 1, Included: true)
         };
-        Splitter splitter = new Splitter;
+        Splitter splitter = new Splitter();
 
         List<Share> result = splitter.CalculateShares(bill, attendees, RoundingMode.Bankers);
 
