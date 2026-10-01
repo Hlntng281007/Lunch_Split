@@ -19,7 +19,33 @@ public class ReceiptFormat
     {
         _clock = clock;
     }
+     
+    public string Format(Bill bill, List<Attendee> attendees, List<Share>shares)
+    {
+        DateTime now = _clock();
+        StringBuilder receipt = new StringBuilder();
 
+        receipt.AppendLine($"Student: {StudentName}");
+        receipt.AppendLine($"Date: {now: yyyy-MM-dd}");
+        receipt.AppendLine($"Generated: {now: yyyy-MM-dd HH:mm:ss}");
+
+        receipt.AppendLine("----------------------------------------");
+        receipt.AppendLine($"Subtotal: {bill.Subtotal:C}");
+        receipt.AppendLine($"Tax: {bill.Tax:C}");
+        receipt.AppendLine("----------------------------------------");
+
+        foreach (Share share in shares)
+        {
+            receipt.AppendLine($"{share.Name}: {share.Amount:C}");
+        }
+
+        decimal grandTotal = shares.Sum(share => share.Amount);
+        receipt.AppendLine("----------------------------------------");
+        receipt.AppendLine($"Total: {grandTotal:C}");
+
+        return receipt.ToString();
+
+    }
     
     
 }
