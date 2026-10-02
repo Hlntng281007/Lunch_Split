@@ -59,5 +59,7 @@ public class BillValidatorTests
         BillValidator validator = new BillValidator();
 
         ValidationResult result = validator.Validate(bill,attendees);
+
+        Assert.IsFalse(result.IsValid);
     }
 }
