@@ -1,4 +1,4 @@
-Project setup
+## Project setup
 This solution was scaffolded from the command line as a src/tests split, rather than a single project:
 bash
 dotnet new sln -n Lunch_Split
@@ -11,13 +11,13 @@ dotnet sln add tests/Lunch_Split.Tests/Lunch_Split.Tests.csproj
 dotnet add tests/Lunch_Split.Tests reference src/Lunch_Split/Lunch_Split.csproj
 
 
-Build
+## Build
 dotnet restore
 dotnet build
 
-Run
+## Run
 dotnet run --project src/Lunch_Split
 
-Run the unit tests
+## Run the unit tests
 dotnet test
 
