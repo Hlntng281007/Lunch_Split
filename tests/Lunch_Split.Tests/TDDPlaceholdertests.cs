@@ -14,6 +14,8 @@ public class TDDPlaceholderTests
         {
             new("Alex", Weight: 1, Included: true)
         };
+        List<Share> shares = new List<Share> { new("Alex", 55.00m) };
+
         CsvReceiptExporter exporter = new CsvReceiptExporter();
 
         string cvs = exporter.Export(bill, attendees, shares);
