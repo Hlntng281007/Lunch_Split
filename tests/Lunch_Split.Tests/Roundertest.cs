@@ -9,6 +9,7 @@ namespace Lunch_Split.Tests;
 [TestClass]
 public class RounderTest
 {
+    [TestMethod]
     public void RoundShares_NoRounding_PreservesRawDecimals()
     {
         List<Share> rawShares = new List<Share>

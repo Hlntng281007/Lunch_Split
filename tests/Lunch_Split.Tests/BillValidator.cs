@@ -52,6 +52,7 @@ public class BillValidatorTests
         Assert.IsFalse(result.IsValid);
     }
 
+    [TestMethod]
     public void Validate_ZeroAttendees_ReturnsFail()
     {
         Bill bill = new Bill (Subtotal: 10.00m, Tax: 0m, TipMode.none, tipInput: 0m);
