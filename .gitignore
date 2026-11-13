@@ -1,0 +1,21 @@
+# build output
+bin/
+obj/
+TestResults/
+
+#IDE/Os cluter
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+.DS_Store
+__MACOSX/
+
+#Secrets: Square Sandbox credentials must never be committed.
+# Commit appsettings.example.json instead.
+appsettings.json
+appsettings.*.json
+!appsettings.example.json
+.env
+
