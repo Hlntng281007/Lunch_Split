@@ -51,7 +51,7 @@ public class PaymentProcessorMoqTests
     [TestMethod]
     public async Task M3_05_ProcessBatch_ZeroDollarBill_NeverInvokesProcessor()
     {
-        // Arrange: split a $0.00 bill with the Assignment 1 engine.
+        // Arrange
         Mock<IPaymentProcessor> processor = new Mock<IPaymentProcessor>();
         PaymentManager manager = new PaymentManager(processor.Object);
         Bill bill = new Bill(Subtotal: 0.00m, Tax: 0.00m, TipMode.none, tipInput: 0m);
@@ -67,6 +67,32 @@ public class PaymentProcessorMoqTests
 
         // Assert
         processor.Verify(p => p.ProcessPaymentAsync(It.IsAny<PaymentRequest>()), Times.Never());
+    }
+
+    [TestMethod]
+    public async Task M3_06_ProcessBatch_FourAttendees_InvokesProcessorExactlyFourTimes()
+    {
+        // Arrange
+        Mock<IPaymentProcessor> processor = new Mock<IPaymentProcessor>();
+        processor
+            .Setup(p => p.ProcessPaymentAsync(It.IsAny<PaymentRequest>()))
+            .ReturnsAsync((PaymentRequest r) => PaymentResult.Success($"txn-{r.PayerName}"));
+        PaymentManager manager = new PaymentManager(processor.Object);
+        Bill bill = new Bill(Subtotal: 100.00m, Tax: 0.00m, TipMode.none, tipInput: 0m);
+        List<Attendee> attendees = new List<Attendee>
+        {
+            new("Alex", Weight: 1, Included: true),
+            new("Sam", Weight: 1, Included: true),
+            new("Jo", Weight: 1, Included: true),
+            new("Kim", Weight: 1, Included: true)
+        };
+        List<AttendeePayment> payments = ToPayments(new Splitter().CalculateShares(bill, attendees, RoundingMode.Bankers));
+
+        // Act
+        await manager.ProcessBatchAsync(payments, Cad);
+
+        // Assert
+        processor.Verify(p => p.ProcessPaymentAsync(It.IsAny<PaymentRequest>()), Times.Exactly(4));
     }
     private static List<AttendeePayment> ToPayments(List<Share> shares) =>
         shares.Select(s => new AttendeePayment(s.Name, s.Amount, SandboxNonces.Ok)).ToList();
