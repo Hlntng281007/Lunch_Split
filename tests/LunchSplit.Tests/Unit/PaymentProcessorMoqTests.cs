@@ -27,7 +27,26 @@ public class PaymentProcessorMoqTests
             () => manager.ChargeAsync(25.00m, Cad, SandboxNonces.Ok));
     }
 
-    
+    [TestMethod]
+    public async Task M3_04_Charge_ValidAmount_InvokesProcessorWithExactAmount()
+    {
+        // Arrange
+        Mock<IPaymentProcessor> processor = new Mock<IPaymentProcessor>();
+        processor
+            .Setup(p => p.ProcessPaymentAsync(It.IsAny<PaymentRequest>()))
+            .ReturnsAsync(PaymentResult.Success("txn-001"));
+        PaymentManager manager = new PaymentManager(processor.Object);
+
+        // Act
+        await manager.ChargeAsync(42.75m, Cad, SandboxNonces.Ok);
+
+        // Assert
+        processor.Verify(p => p.ProcessPaymentAsync(It.Is<PaymentRequest>(r =>
+                r.Amount == 42.75m &&
+                r.CurrencyCode == Cad &&
+                r.CardNonce == SandboxNonces.Ok)),
+            Times.Once());
+    }
     private static List<AttendeePayment> ToPayments(List<Share> shares) =>
         shares.Select(s => new AttendeePayment(s.Name, s.Amount, SandboxNonces.Ok)).ToList();
 }
