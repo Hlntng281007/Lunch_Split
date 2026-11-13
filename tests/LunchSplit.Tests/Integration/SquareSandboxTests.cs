@@ -42,6 +42,21 @@ public class SquareSandboxTests
         
     }
 
+    [TestMethod]
+    public async Task M3_02_ProcessPayment_DeclinedNonce_ReturnsDeclinedError()
+    {
+        //Arange
+        SquarePaymentService service = RequireSandbox();
+        PaymentRequest request = NewRequest (12.50m, Cad, SandboxNonces.Declined);
+
+        //Act
+        PaymentResult result = await service.ProcessPaymentAsync(request);
+
+        //Assert
+        Assert.IsFalse(result.IsSuccess);
+        Assert.AreEqual("CARD_DECLINED", result.ErrorCode, $"Square returned raw code {result.GatewayErrorCode}: {result.ErrorDetail}");
+    }
+
     private static SquarePaymentService RequireSandbox()
     {
         if(_service is null)
