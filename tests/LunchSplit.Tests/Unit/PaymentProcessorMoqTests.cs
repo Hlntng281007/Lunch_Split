@@ -94,6 +94,33 @@ public class PaymentProcessorMoqTests
         // Assert
         processor.Verify(p => p.ProcessPaymentAsync(It.IsAny<PaymentRequest>()), Times.Exactly(4));
     }
+
+    [TestMethod]
+    public async Task M3_07_ProcessBatch_SecondAttendeeDeclined_ReportsTwoSuccessesOneFailure()
+    {
+        // Arrange
+        Mock<IPaymentProcessor> processor = new Mock<IPaymentProcessor>();
+        processor
+            .Setup(p => p.ProcessPaymentAsync(It.IsAny<PaymentRequest>()))
+            .ReturnsAsync((PaymentRequest r) => PaymentResult.Success($"txn-{r.PayerName}"));
+        processor
+            .Setup(p => p.ProcessPaymentAsync(It.Is<PaymentRequest>(r => r.CardNonce == SandboxNonces.Declined)))
+            .ReturnsAsync(PaymentResult.Failure(PaymentResult.CardDeclined, 400));
+        PaymentManager manager = new PaymentManager(processor.Object);
+        List<AttendeePayment> payments = new List<AttendeePayment>
+        {
+            new("Alex", 20.00m, SandboxNonces.Ok),
+            new("Sam", 20.00m, SandboxNonces.Declined),
+            new("Jo", 20.00m, SandboxNonces.Ok)
+        };
+
+        // Act
+        BatchPaymentSummary summary = await manager.ProcessBatchAsync(payments, Cad);
+
+        // Assert
+        Assert.AreEqual(2, summary.SuccessCount);
+        Assert.AreEqual(1, summary.FailureCount);
+    }
     private static List<AttendeePayment> ToPayments(List<Share> shares) =>
         shares.Select(s => new AttendeePayment(s.Name, s.Amount, SandboxNonces.Ok)).ToList();
 }
