@@ -93,6 +93,21 @@ public class SquareSandboxTests
 
     }
 
+    [TestMethod]
+    public async Task M3_10_GetTransactionStatus_CompletedPayment_ReturnsCompleted()
+    {
+        //Arange
+        SquarePaymentService service = RequireSandbox();
+        PaymentResult created = await service.ProcessPaymentAsync(NewRequest(3.00m, Cad, SandboxNonces.Ok));
+        Assert.IsTrue(created.IsSuccess, $"Setup payment failed: {created.ErrorCode} {created.ErrorDetail}"); 
+
+        //Act
+        PaymentStatus status = await service.GetTransactionStatusAsync(created.TransactionId!);
+
+        //Assert
+        Assert.AreEqual(PaymentStatus.Completed, status);
+    }
+
     private static SquarePaymentService RequireSandbox()
     {
         if(_service is null)
