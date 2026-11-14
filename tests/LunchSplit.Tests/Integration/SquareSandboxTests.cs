@@ -57,6 +57,22 @@ public class SquareSandboxTests
         Assert.AreEqual("CARD_DECLINED", result.ErrorCode, $"Square returned raw code {result.GatewayErrorCode}: {result.ErrorDetail}");
     }
 
+     [TestMethod]
+    public async Task M3_08_ProcessPayment_UnsupportedCurrency_ReturnsHttp400()
+    {
+        // Arrange
+        SquarePaymentService service = RequireSandbox();
+        PaymentRequest request = NewRequest(12.50m, "EUR", SandboxNonces.Ok);
+
+        // Act
+        PaymentResult result = await service.ProcessPaymentAsync(request);
+
+        // Assert
+        Assert.IsFalse(result.IsSuccess);
+        Assert.AreEqual(400, result.HttpStatusCode,
+            $"Square returned {result.GatewayErrorCode}: {result.ErrorDetail}");
+    }
+
     private static SquarePaymentService RequireSandbox()
     {
         if(_service is null)
