@@ -73,6 +73,26 @@ public class SquareSandboxTests
             $"Square returned {result.GatewayErrorCode}: {result.ErrorDetail}");
     }
 
+    [TestMethod]
+    public async Task M3_09_ProcessPayment_DuplicateIdempotencyKey_ReturnsOriginalTransaction()
+    
+    {
+        // Arrange
+       SquarePaymentService service = RequireSandbox();
+       PaymentRequest request = NewRequest(7.25m, Cad, SandboxNonces.Ok);
+
+        // Act
+       PaymentResult first = await service.ProcessPaymentAsync(request);
+       PaymentResult second = await service.ProcessPaymentAsync(request);
+
+        // Assert
+        Assert.IsTrue(first.IsSuccess, $"First attempt failed: {first.ErrorCode} {first.ErrorDetail}");
+        Assert.IsTrue(second.IsSuccess, $"Retry failed: {second.ErrorCode} {second.ErrorDetail}");
+        Assert.AreEqual(first.TransactionId, second.TransactionId,
+        "A duplicate idempotency key must return the same payment (no double charge).");
+
+    }
+
     private static SquarePaymentService RequireSandbox()
     {
         if(_service is null)
